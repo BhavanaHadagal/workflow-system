@@ -68,7 +68,10 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
-    media: Media;
+    blog: Blog;
+    contracts: Contract;
+    workflows: Workflow;
+    workflowLogs: WorkflowLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -77,7 +80,10 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
+    blog: BlogSelect<false> | BlogSelect<true>;
+    contracts: ContractsSelect<false> | ContractsSelect<true>;
+    workflows: WorkflowsSelect<false> | WorkflowsSelect<true>;
+    workflowLogs: WorkflowLogsSelect<false> | WorkflowLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -90,6 +96,9 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
+  widgets: {
+    collections: CollectionsWidget;
+  };
   user: User;
   jobs: {
     tasks: unknown;
@@ -141,22 +150,63 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "blog".
  */
-export interface Media {
+export interface Blog {
   id: string;
-  alt: string;
+  title: string;
+  content?: string | null;
+  workflowStatus?: string | null;
+  currentStep?: string | null;
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contracts".
+ */
+export interface Contract {
+  id: string;
+  title: string;
+  amount: number;
+  workflowStatus?: string | null;
+  currentStep?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "workflows".
+ */
+export interface Workflow {
+  id: string;
+  name: string;
+  targetCollection: 'blog' | 'contracts';
+  steps: {
+    stepName: string;
+    assignedRole: string;
+    stepType?: ('review' | 'approval' | 'signoff' | 'comment') | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "workflowLogs".
+ */
+export interface WorkflowLog {
+  id: string;
+  workflow: string | Workflow;
+  documentId: string;
+  collection: string;
+  stepName: string;
+  action: string;
+  comment?: string | null;
+  actedBy: string;
+  timestamp?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -187,8 +237,20 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
-        relationTo: 'media';
-        value: string | Media;
+        relationTo: 'blog';
+        value: string | Blog;
+      } | null)
+    | ({
+        relationTo: 'contracts';
+        value: string | Contract;
+      } | null)
+    | ({
+        relationTo: 'workflows';
+        value: string | Workflow;
+      } | null)
+    | ({
+        relationTo: 'workflowLogs';
+        value: string | WorkflowLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -256,21 +318,61 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
+ * via the `definition` "blog_select".
  */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
+export interface BlogSelect<T extends boolean = true> {
+  title?: T;
+  content?: T;
+  workflowStatus?: T;
+  currentStep?: T;
   updatedAt?: T;
   createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contracts_select".
+ */
+export interface ContractsSelect<T extends boolean = true> {
+  title?: T;
+  amount?: T;
+  workflowStatus?: T;
+  currentStep?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "workflows_select".
+ */
+export interface WorkflowsSelect<T extends boolean = true> {
+  name?: T;
+  targetCollection?: T;
+  steps?:
+    | T
+    | {
+        stepName?: T;
+        assignedRole?: T;
+        stepType?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "workflowLogs_select".
+ */
+export interface WorkflowLogsSelect<T extends boolean = true> {
+  workflow?: T;
+  documentId?: T;
+  collection?: T;
+  stepName?: T;
+  action?: T;
+  comment?: T;
+  actedBy?: T;
+  timestamp?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -311,6 +413,16 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

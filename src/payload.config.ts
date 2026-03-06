@@ -5,8 +5,15 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { Blog } from './collections/Blog'
+import { Contract } from './collections/Contract'
+import { Workflows } from './collections/Workflows'
+import { WorkflowLogs } from './collections/WorkflowLogs'
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+import {
+  triggerWorkflowEndpoint,
+  workflowStatusEndpoint,
+} from './endpoints/workflowEndpoints'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,7 +25,19 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  endpoints: [
+  {
+    path: '/custom-workflow-trigger',
+    method: 'post',
+    handler: triggerWorkflowEndpoint,
+  },
+  {
+    path: '/custom-workflow-status/:docId',
+    method: 'get',
+    handler: workflowStatusEndpoint,
+  },
+],
+  collections: [Users, Blog, Contract, Workflows, WorkflowLogs],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
