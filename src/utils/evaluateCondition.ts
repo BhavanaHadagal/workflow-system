@@ -1,10 +1,13 @@
-export const evaluateCondition = (
-  doc: any,
-  step: any,
-): boolean => {
+export const evaluateCondition = (doc: any, step: any): boolean => {
   const { conditionField, conditionOperator, conditionValue } = step
 
-  if (!conditionField || !conditionOperator || conditionValue === undefined || conditionValue === null || conditionValue === '') {
+  if (
+    !conditionField ||
+    !conditionOperator ||
+    conditionValue === undefined ||
+    conditionValue === null ||
+    conditionValue === ''
+  ) {
     return true
   }
 
@@ -12,10 +15,8 @@ export const evaluateCondition = (
 
   if (fieldValue === undefined) return false
 
-  const left =
-    typeof fieldValue === 'number' ? fieldValue : String(fieldValue)
-  const right =
-    !isNaN(Number(conditionValue)) ? Number(conditionValue) : String(conditionValue)
+  const left = typeof fieldValue === 'number' ? fieldValue : String(fieldValue)
+  const right = !isNaN(Number(conditionValue)) ? Number(conditionValue) : String(conditionValue)
 
   switch (conditionOperator) {
     case '=':

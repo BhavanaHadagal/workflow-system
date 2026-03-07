@@ -15,10 +15,7 @@ export const triggerWorkflow: CollectionAfterChangeHook = async ({
     console.log('Operation:', operation)
     console.log('Doc ID:', doc.id)
 
-    if (
-      doc.workflowStatus === 'in-progress' ||
-      doc.workflowStatus === 'completed'
-    ) {
+    if (doc.workflowStatus === 'in-progress' || doc.workflowStatus === 'completed') {
       console.log('Workflow already started or completed')
       console.log('================ HOOK END ==================')
       return doc
@@ -76,10 +73,7 @@ export const triggerWorkflow: CollectionAfterChangeHook = async ({
         documentId: String(doc.id),
         targetCollection: collection.slug,
         stepName: firstStep.stepName,
-        action:
-          operation === 'create'
-            ? 'Workflow Started'
-            : 'Workflow Re-Evaluated',
+        action: operation === 'create' ? 'Workflow Started' : 'Workflow Re-Evaluated',
         comment: '',
         actedBy: (req.user as any)?.email || 'system',
       },

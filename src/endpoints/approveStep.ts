@@ -12,10 +12,7 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
     }
 
     if (!collection || !docId) {
-      return Response.json(
-        { message: 'collection and docId are required' },
-        { status: 400 },
-      )
+      return Response.json({ message: 'collection and docId are required' }, { status: 400 })
     }
 
     const user = req.user as any
@@ -61,10 +58,7 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
     }
 
     if (!doc.currentStep) {
-      return Response.json(
-        { message: 'No active current step on this document' },
-        { status: 400 },
-      )
+      return Response.json({ message: 'No active current step on this document' }, { status: 400 })
     }
 
     const currentStepIndex = workflow.steps.findIndex(

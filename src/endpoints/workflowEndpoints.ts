@@ -11,10 +11,7 @@ export const triggerWorkflowEndpoint = async (req: PayloadRequest) => {
     }
 
     if (!collection || !docId) {
-      return Response.json(
-        { message: 'collection and docId are required' },
-        { status: 400 },
-      )
+      return Response.json({ message: 'collection and docId are required' }, { status: 400 })
     }
 
     const doc: any = await payload.findByID({
@@ -38,19 +35,13 @@ export const triggerWorkflowEndpoint = async (req: PayloadRequest) => {
     })
 
     if (!workflows.docs.length) {
-      return Response.json(
-        { message: `No workflow found for ${collection}` },
-        { status: 404 },
-      )
+      return Response.json({ message: `No workflow found for ${collection}` }, { status: 404 })
     }
 
     const workflow: any = workflows.docs[0]
 
     if (!workflow.steps || workflow.steps.length === 0) {
-      return Response.json(
-        { message: 'Workflow has no steps' },
-        { status: 400 },
-      )
+      return Response.json({ message: 'Workflow has no steps' }, { status: 400 })
     }
 
     const firstStep = workflow.steps[0]
@@ -66,19 +57,19 @@ export const triggerWorkflowEndpoint = async (req: PayloadRequest) => {
       req,
     })
 
-   await payload.create({
-  collection: 'workflowLogs' as any,
-  data: {
-    workflow: workflow.id,
-    documentId: String(docId),
-    targetCollection: collection,  // ✅ FIXED
-    stepName: firstStep.stepName,
-    action: 'Workflow Triggered Manually',
-    comment: '',
-    actedBy: 'system',
-  },
-  req,
-})
+    await payload.create({
+      collection: 'workflowLogs' as any,
+      data: {
+        workflow: workflow.id,
+        documentId: String(docId),
+        targetCollection: collection, // ✅ FIXED
+        stepName: firstStep.stepName,
+        action: 'Workflow Triggered Manually',
+        comment: '',
+        actedBy: 'system',
+      },
+      req,
+    })
 
     return Response.json({
       message: 'Workflow triggered successfully',

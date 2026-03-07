@@ -83,9 +83,7 @@ export default function WorkflowPanel() {
 
   if (!id) return null
 
-  const isFinished =
-    data?.workflowStatus === 'completed' ||
-    data?.workflowStatus === 'rejected'
+  const isFinished = data?.workflowStatus === 'completed' || data?.workflowStatus === 'rejected'
 
   return (
     <div
@@ -108,15 +106,19 @@ export default function WorkflowPanel() {
       ) : (
         <>
           <div style={{ fontSize: 14, lineHeight: 1.6, marginBottom: 10 }}>
-            <div><strong>Status:</strong> {data?.workflowStatus || 'pending'}</div>
-            <div><strong>Step:</strong> {data?.currentStep || 'N/A'}</div>
-            <div><strong>Logs:</strong> {data?.logs?.length || 0}</div>
+            <div>
+              <strong>Status:</strong> {data?.workflowStatus || 'pending'}
+            </div>
+            <div>
+              <strong>Step:</strong> {data?.currentStep || 'N/A'}
+            </div>
+            <div>
+              <strong>Logs:</strong> {data?.logs?.length || 0}
+            </div>
           </div>
 
           {error ? (
-            <div style={{ color: '#ff6b6b', fontSize: 13, marginBottom: 10 }}>
-              {error}
-            </div>
+            <div style={{ color: '#ff6b6b', fontSize: 13, marginBottom: 10 }}>{error}</div>
           ) : null}
 
           <div style={{ marginBottom: 10 }}>
@@ -194,9 +196,7 @@ export default function WorkflowPanel() {
                       <strong>{log.stepName}</strong> — {log.action}
                     </div>
 
-                    <div style={{ opacity: 0.85 }}>
-                      by {log.actedBy}
-                    </div>
+                    <div style={{ opacity: 0.85 }}>by {log.actedBy}</div>
 
                     {log.timestamp ? (
                       <div style={{ opacity: 0.65 }}>
@@ -205,9 +205,7 @@ export default function WorkflowPanel() {
                     ) : null}
 
                     {log.comment ? (
-                      <div style={{ marginTop: 3 }}>
-                        Comment: {log.comment}
-                      </div>
+                      <div style={{ marginTop: 3 }}>Comment: {log.comment}</div>
                     ) : null}
                   </div>
                 ))

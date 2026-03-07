@@ -4,13 +4,13 @@ import { triggerWorkflow } from '../hooks/triggerWorkflow'
 export const Blog: CollectionConfig = {
   slug: 'blog',
   admin: {
-  useAsTitle: 'title',
-  components: {
-    edit: {
-      beforeDocumentControls: ['/components/WorkflowPanel'],
+    useAsTitle: 'title',
+    components: {
+      edit: {
+        beforeDocumentControls: ['/components/WorkflowPanel'],
+      },
     },
   },
-},
   access: {
     update: ({ req }) => {
       const user = req.user as any
