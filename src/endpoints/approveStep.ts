@@ -12,7 +12,10 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
     }
 
     if (!collection || !docId) {
-      return Response.json({ message: 'collection and docId are required' }, { status: 400 })
+      return Response.json(
+        { message: 'collection and docId are required' },
+        { status: 400 },
+      )
     }
 
     const user = req.user as any
@@ -58,7 +61,10 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
     }
 
     if (!doc.currentStep) {
-      return Response.json({ message: 'No active current step on this document' }, { status: 400 })
+      return Response.json(
+        { message: 'No active current step on this document' },
+        { status: 400 },
+      )
     }
 
     const currentStepIndex = workflow.steps.findIndex(
@@ -76,12 +82,10 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
     const nextStep = workflow.steps[currentStepIndex + 1]
     const actedBy = user.email || 'system'
 
-    // role-based enforcement
-    if (
-      currentStep.assignedRole &&
-      user.role !== 'admin' &&
-      user.role !== currentStep.assignedRole
-    ) {
+    const userRole = String(user.role || '').toLowerCase()
+    const assignedRole = String(currentStep.assignedRole || '').toLowerCase()
+
+    if (assignedRole && userRole !== 'admin' && userRole !== assignedRole) {
       return Response.json(
         {
           message: `Only users with role "${currentStep.assignedRole}" can approve this step`,
@@ -90,7 +94,6 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
       )
     }
 
-    // log approval of current step
     await payload.create({
       collection: 'workflowLogs' as any,
       data: {
