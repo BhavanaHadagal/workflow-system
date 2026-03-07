@@ -23,11 +23,11 @@ export const Users: CollectionConfig = {
         },
         {
           label: 'Manager',
-          value: 'manager',
+          value: 'Manager',
         },
         {
           label: 'Reviewer',
-          value: 'reviewer',
+          value: 'Reviewer',
         },
       ],
     },
