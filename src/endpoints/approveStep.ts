@@ -85,7 +85,7 @@ export const approveStepEndpoint = async (req: PayloadRequest) => {
     const userRole = String(user.role || '').toLowerCase()
     const assignedRole = String(currentStep.assignedRole || '').toLowerCase()
 
-    if (assignedRole && userRole !== 'admin' && userRole !== assignedRole) {
+    if (assignedRole && userRole !== assignedRole) {
       return Response.json(
         {
           message: `Only users with role "${currentStep.assignedRole}" can approve this step`,
