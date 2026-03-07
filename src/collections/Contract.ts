@@ -18,7 +18,7 @@ export const Contract: CollectionConfig = {
       if (!user) return false
       if (user.role === 'admin') return true
 
-      return user.role === 'editor' || user.role === 'manager'
+      return user.role === 'Editor' || user.role === 'Manager'
     },
   },
   hooks: {
