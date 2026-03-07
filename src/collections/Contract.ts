@@ -5,6 +5,11 @@ export const Contract: CollectionConfig = {
   slug: 'contracts',
   admin: {
     useAsTitle: 'title',
+    components: {
+      edit: {
+        beforeDocumentControls: ['/components/WorkflowPanel'],
+      },
+    },
   },
   access: {
     update: ({ req }) => {
