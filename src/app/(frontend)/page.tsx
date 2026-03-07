@@ -7,53 +7,67 @@ import { fileURLToPath } from 'url'
 import config from '@/payload.config'
 import './styles.css'
 
-export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
-
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
-
+export default function HomePage() {
   return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
+    <main
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#000',
+        color: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}
+    >
+      <div style={{ maxWidth: 800, textAlign: 'center' }}>
+        <h1 style={{ fontSize: '56px', marginBottom: '16px' }}>
+          Dynamic Workflow Management System
+        </h1>
+
+        <p style={{ fontSize: '20px', lineHeight: 1.6, marginBottom: '32px' }}>
+          A Payload CMS based workflow engine for Blog and Contract approvals with
+          multi-step progression, role-based approval, audit logs, conditions, and admin UI integration.
+        </p>
+
+        <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
+            href="/admin"
+            style={{
+              padding: '12px 20px',
+              background: '#fff',
+              color: '#000',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: 600,
+            }}
           >
-            Go to admin panel
+            Open Admin Panel
           </a>
+
           <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
+            href="/admin/collections/blog"
+            style={{
+              padding: '12px 20px',
+              border: '1px solid #666',
+              color: '#fff',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: 600,
+            }}
           >
-            Documentation
+            View Blog Collection
           </a>
         </div>
+
+        <div style={{ marginTop: '40px', fontSize: '16px', opacity: 0.85 }}>
+          <p>✅ Multi-step workflows</p>
+          <p>✅ Role-based approvals</p>
+          <p>✅ Condition-based triggers</p>
+          <p>✅ Immutable workflow logs</p>
+          <p>✅ Custom admin workflow panel</p>
+        </div>
       </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
-      </div>
-    </div>
+    </main>
   )
 }
