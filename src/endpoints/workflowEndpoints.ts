@@ -28,7 +28,7 @@ export const triggerWorkflowEndpoint = async (req: PayloadRequest) => {
     }
 
     const workflows = await payload.find({
-      collection: 'workflows' as any,
+      collection: 'workflow-configs' as any,
       where: {
         targetCollection: {
           equals: collection,
@@ -66,20 +66,19 @@ export const triggerWorkflowEndpoint = async (req: PayloadRequest) => {
       req,
     })
 
-    await payload.create({
-      collection: 'workflowLogs' as any,
-      data: {
-        workflow: workflow.id,
-        documentId: String(docId),
-        collection,
-        stepName: firstStep.stepName,
-        action: 'Workflow Triggered Manually',
-        comment: '',
-        actedBy: 'system',
-      },
-      depth: 0,
-      req,
-    })
+   await payload.create({
+  collection: 'workflowLogs' as any,
+  data: {
+    workflow: workflow.id,
+    documentId: String(docId),
+    targetCollection: collection,  // ✅ FIXED
+    stepName: firstStep.stepName,
+    action: 'Workflow Triggered Manually',
+    comment: '',
+    actedBy: 'system',
+  },
+  req,
+})
 
     return Response.json({
       message: 'Workflow triggered successfully',

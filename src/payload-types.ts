@@ -70,7 +70,7 @@ export interface Config {
     users: User;
     blog: Blog;
     contracts: Contract;
-    workflows: Workflow;
+    'workflow-configs': WorkflowConfig;
     workflowLogs: WorkflowLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -82,7 +82,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
     contracts: ContractsSelect<false> | ContractsSelect<true>;
-    workflows: WorkflowsSelect<false> | WorkflowsSelect<true>;
+    'workflow-configs': WorkflowConfigsSelect<false> | WorkflowConfigsSelect<true>;
     workflowLogs: WorkflowLogsSelect<false> | WorkflowLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -129,6 +129,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  role: 'admin' | 'editor' | 'manager' | 'reviewer';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -176,9 +177,9 @@ export interface Contract {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workflows".
+ * via the `definition` "workflow-configs".
  */
-export interface Workflow {
+export interface WorkflowConfig {
   id: string;
   name: string;
   targetCollection: 'blog' | 'contracts';
@@ -186,6 +187,9 @@ export interface Workflow {
     stepName: string;
     assignedRole: string;
     stepType?: ('review' | 'approval' | 'signoff' | 'comment') | null;
+    conditionField?: string | null;
+    conditionOperator?: ('=' | '>' | '<' | '>=' | '<=') | null;
+    conditionValue?: string | null;
     id?: string | null;
   }[];
   updatedAt: string;
@@ -197,9 +201,9 @@ export interface Workflow {
  */
 export interface WorkflowLog {
   id: string;
-  workflow: string | Workflow;
+  workflow: string | WorkflowConfig;
   documentId: string;
-  collection: string;
+  targetCollection: string;
   stepName: string;
   action: string;
   comment?: string | null;
@@ -245,8 +249,8 @@ export interface PayloadLockedDocument {
         value: string | Contract;
       } | null)
     | ({
-        relationTo: 'workflows';
-        value: string | Workflow;
+        relationTo: 'workflow-configs';
+        value: string | WorkflowConfig;
       } | null)
     | ({
         relationTo: 'workflowLogs';
@@ -299,6 +303,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -342,9 +347,9 @@ export interface ContractsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workflows_select".
+ * via the `definition` "workflow-configs_select".
  */
-export interface WorkflowsSelect<T extends boolean = true> {
+export interface WorkflowConfigsSelect<T extends boolean = true> {
   name?: T;
   targetCollection?: T;
   steps?:
@@ -353,6 +358,9 @@ export interface WorkflowsSelect<T extends boolean = true> {
         stepName?: T;
         assignedRole?: T;
         stepType?: T;
+        conditionField?: T;
+        conditionOperator?: T;
+        conditionValue?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -365,7 +373,7 @@ export interface WorkflowsSelect<T extends boolean = true> {
 export interface WorkflowLogsSelect<T extends boolean = true> {
   workflow?: T;
   documentId?: T;
-  collection?: T;
+  targetCollection?: T;
   stepName?: T;
   action?: T;
   comment?: T;

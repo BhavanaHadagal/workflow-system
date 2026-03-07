@@ -14,6 +14,7 @@ import {
   triggerWorkflowEndpoint,
   workflowStatusEndpoint,
 } from './endpoints/workflowEndpoints'
+import { approveStepEndpoint } from './endpoints/approveStep'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,14 +28,19 @@ export default buildConfig({
   },
   endpoints: [
   {
-    path: '/custom-workflow-trigger',
+    path: '/workflows/trigger',
     method: 'post',
     handler: triggerWorkflowEndpoint,
   },
   {
-    path: '/custom-workflow-status/:docId',
+    path: '/workflows/status/:docId',
     method: 'get',
     handler: workflowStatusEndpoint,
+  },
+  {
+    path: '/workflows/approve',
+    method: 'post',
+    handler: approveStepEndpoint,
   },
 ],
   collections: [Users, Blog, Contract, Workflows, WorkflowLogs],

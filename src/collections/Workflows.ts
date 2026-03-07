@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload'
 
 export const Workflows: CollectionConfig = {
-  slug: 'workflows',
+  slug: 'workflow-configs',
   admin: {
     useAsTitle: 'name',
   },
@@ -50,6 +50,25 @@ export const Workflows: CollectionConfig = {
             { label: 'Sign Off', value: 'signoff' },
             { label: 'Comment Only', value: 'comment' },
           ],
+        },
+        {
+          name: 'conditionField',
+          type: 'text',
+        },
+        {
+          name: 'conditionOperator',
+          type: 'select',
+          options: [
+            { label: 'Equals', value: '=' },
+            { label: 'Greater Than', value: '>' },
+            { label: 'Less Than', value: '<' },
+            { label: 'Greater Than or Equal', value: '>=' },
+            { label: 'Less Than or Equal', value: '<=' },
+          ],
+        },
+        {
+          name: 'conditionValue',
+          type: 'text',
         },
       ],
     },

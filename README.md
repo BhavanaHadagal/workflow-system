@@ -1,67 +1,289 @@
-# Payload Blank Template
+🧩 Dynamic Workflow Management System
+Built with Payload CMS (Backend Developer Recruitment Task)
+📌 Overview
 
-This template comes configured with the bare minimum to get started on anything you need.
+This project implements a Dynamic Multi-Stage Workflow Management System inside Payload CMS.
 
-## Quick start
+The system allows admins to:
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+Create reusable workflows dynamically
 
-## Quick Start - local setup
+Attach workflows to any collection (Blog, Contract, etc.)
 
-To spin up this template locally, follow these steps:
+Define unlimited workflow steps
 
-### Clone
+Assign steps to roles
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+Track approvals via audit logs
 
-### Development
+Enforce role-based step locking
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+Trigger workflows automatically via hooks
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+Access workflow data via custom REST APIs
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+🎯 Objective
 
-#### Docker (Optional)
+To build a reusable workflow engine where documents go through multi-stage approval processes dynamically through the Payload Admin UI.
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+🏗 System Architecture
+Core Collections
+1️⃣ Users
 
-To do so, follow these steps:
+Authentication collection
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+Role-based system:
 
-## How it works
+admin
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+editor
 
-### Collections
+manager
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+2️⃣ Workflow Configs (workflow-configs)
 
-- #### Users (Authentication)
+Defines workflows dynamically.
 
-  Users are auth-enabled collections that have access to the admin panel.
+Each workflow contains:
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+name
 
-- #### Media
+targetCollection
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+steps[]
 
-### Docker
+Each step includes:
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+stepName
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+assignedRole
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+stepType (approval, review, sign-off, comment-only)
 
-## Questions
+Optional condition fields
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+Workflows can be attached to:
+
+Blog
+
+Contract
+
+Any other collection
+
+3️⃣ Workflow Logs (workflowLogs)
+
+Immutable audit trail collection.
+
+Stores:
+
+Workflow ID
+
+Target collection
+
+Document ID
+
+Step name
+
+Action (Started, Approved, Moved To Next Step, Completed)
+
+User who acted
+
+Timestamp
+
+Comment
+
+⚠ Logs are not editable.
+⚙ Core Features Implemented
+✅ 1. Dynamic Workflow Engine
+
+Unlimited steps supported
+
+Step progression logic implemented
+
+Steps move sequentially
+
+Workflow auto-completes after final step
+
+Step locking based on assigned role
+
+Email notifications simulated via console.log
+
+✅ 2. Automatic Workflow Trigger
+
+Implemented using Payload afterChange hook:
+
+Triggered when document is created
+
+Automatically assigns first step
+
+Creates initial workflow log
+
+✅ 3. Admin UI Injection
+
+Custom Workflow Panel added to collection edit view:
+
+Displays:
+
+Workflow status
+
+Current step
+
+Approval comment box
+
+Approve Current Step button
+
+Recent logs
+
+Inline action enabled:
+
+Approve current step
+
+Role enforcement:
+
+Only assigned role can approve
+
+Admin can override
+
+✅ 4. Audit Trail (Immutable Logs)
+
+All actions recorded in workflowLogs:
+
+Workflow started
+
+Step approved
+
+Step progressed
+
+Workflow completed
+
+Logs cannot be edited from Admin UI.
+
+✅ 5. Custom REST APIs
+1️⃣ POST /api/workflows/approve
+
+Approves current step and moves workflow forward.
+
+Request Body:
+
+{
+  "collection": "blogs",
+  "docId": "123",
+  "comment": "Approved by manager"
+}
+2️⃣ GET /api/workflows/status/:docId
+
+Returns:
+
+Workflow status
+
+Current step
+
+Logs
+
+Example Response:
+
+{
+  "workflowStatus": "in-progress",
+  "currentStep": "Review",
+  "logs": []
+}
+🔐 Role-Based Step Locking
+
+If a step is assigned to editor:
+
+Only editor can approve
+
+Manager receives 403 error
+
+Admin can override
+
+Enforced inside approveStepEndpoint.
+
+🧪 How to Test
+Step 1
+
+Create users:
+
+Admin
+
+Editor
+
+Manager
+
+Step 2
+
+Create Workflow Config:
+
+Target Collection: Blog
+
+Step 1: Review (assigned to editor)
+
+Step 2: Manager Approval (assigned to manager)
+
+Step 3
+
+Create new Blog
+
+Expected:
+
+Status: in-progress
+
+Current Step: Review
+
+Step 4
+
+Login as Manager → Try Approve
+
+Expected:
+
+403 Forbidden
+
+Step 5
+
+Login as Editor → Approve
+
+Expected:
+
+Moves to Manager Approval step
+
+📂 Project Structure (Important Files)
+
+collections/
+  ├── Users.ts
+  ├── Blogs.ts
+  ├── Contracts.ts
+  ├── WorkflowConfigs.ts
+  └── WorkflowLogs.ts
+
+hooks/
+  └── triggerWorkflow.ts
+
+endpoints/
+  ├── approveStep.ts
+  └── workflowStatus.ts
+
+components/
+  └── WorkflowPanel.tsx
+
+🚀 Setup Instructions
+1️⃣ Install Dependencies
+npm install
+2️⃣ Start Development Server
+npm run dev
+
+Admin Panel:
+
+http://localhost:3000/admin
+🛠 Tech Stack
+
+Node.js
+
+TypeScript
+
+Payload CMS
+
+MongoDB
+
+Custom Admin Components
+
+Hooks & Plugins

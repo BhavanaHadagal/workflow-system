@@ -1,4 +1,5 @@
 import type { CollectionAfterChangeHook } from 'payload'
+import { evaluateCondition } from '../utils/evaluateCondition'
 
 export const triggerWorkflow: CollectionAfterChangeHook = async ({
   doc,
@@ -14,22 +15,23 @@ export const triggerWorkflow: CollectionAfterChangeHook = async ({
     console.log('Operation:', operation)
     console.log('Doc ID:', doc.id)
 
-    if (operation !== 'create') {
-      console.log('Skipping because operation is not create')
+    if (
+      doc.workflowStatus === 'in-progress' ||
+      doc.workflowStatus === 'completed'
+    ) {
+      console.log('Workflow already started or completed')
       console.log('================ HOOK END ==================')
       return doc
     }
 
     const workflows = await payload.find({
-      collection: 'workflows',
+      collection: 'workflow-configs' as any,
       where: {
         targetCollection: {
           equals: collection.slug,
         },
       },
     })
-
-    console.log('Workflows found:', workflows.docs.length)
 
     if (!workflows.docs.length) {
       console.log(`No workflow found for ${collection.slug}`)
@@ -39,10 +41,6 @@ export const triggerWorkflow: CollectionAfterChangeHook = async ({
 
     const workflow: any = workflows.docs[0]
 
-    console.log('Workflow ID:', workflow.id)
-    console.log('Workflow name:', workflow.name)
-    console.log('Workflow steps:', workflow.steps)
-
     if (!workflow.steps || workflow.steps.length === 0) {
       console.log('Workflow exists but has no steps')
       console.log('================ HOOK END ==================')
@@ -50,10 +48,18 @@ export const triggerWorkflow: CollectionAfterChangeHook = async ({
     }
 
     const firstStep: any = workflow.steps[0]
-    console.log('First step:', firstStep)
+
+    // ✅ NOW evaluate condition
+    const conditionPassed = evaluateCondition(doc, firstStep)
+
+    if (!conditionPassed) {
+      console.log('Condition did not pass for first step')
+      console.log('================ HOOK END ==================')
+      return doc
+    }
 
     await payload.update({
-      collection: collection.slug,
+      collection: collection.slug as any,
       id: doc.id,
       data: {
         currentStep: firstStep.stepName,
@@ -63,16 +69,17 @@ export const triggerWorkflow: CollectionAfterChangeHook = async ({
       depth: 0,
     })
 
-    console.log('Document updated successfully')
-
     await payload.create({
-      collection: 'workflowLogs',
+      collection: 'workflowLogs' as any,
       data: {
         workflow: workflow.id,
         documentId: String(doc.id),
-        collection: collection.slug,
+        targetCollection: collection.slug,
         stepName: firstStep.stepName,
-        action: 'Workflow Started',
+        action:
+          operation === 'create'
+            ? 'Workflow Started'
+            : 'Workflow Re-Evaluated',
         comment: '',
         actedBy: (req.user as any)?.email || 'system',
       },

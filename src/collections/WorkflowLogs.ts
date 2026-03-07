@@ -1,21 +1,19 @@
-import { CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 
 export const WorkflowLogs: CollectionConfig = {
   slug: 'workflowLogs',
   admin: {
     useAsTitle: 'action',
   },
-
   access: {
     update: () => false,
     delete: () => false,
   },
-
   fields: [
     {
       name: 'workflow',
       type: 'relationship',
-      relationTo: 'workflows',
+      relationTo: 'workflow-configs',
       required: true,
     },
     {
@@ -24,7 +22,7 @@ export const WorkflowLogs: CollectionConfig = {
       required: true,
     },
     {
-      name: 'collection',
+      name: 'targetCollection',
       type: 'text',
       required: true,
     },
