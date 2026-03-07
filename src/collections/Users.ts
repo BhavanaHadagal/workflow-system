@@ -19,15 +19,15 @@ export const Users: CollectionConfig = {
         },
         {
           label: 'Editor',
-          value: 'Editor',
+          value: 'editor',
         },
         {
           label: 'Manager',
-          value: 'Manager',
+          value: 'manager',
         },
         {
           label: 'Reviewer',
-          value: 'Reviewer',
+          value: 'reviewer',
         },
       ],
     },
