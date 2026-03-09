@@ -352,7 +352,6 @@ Create `.env` file:
 
 DATABASE_URL=your_mongodb_connection_string  
 PAYLOAD_SECRET=your_secret_key  
-NEXT_PUBLIC_SERVER_URL=http://localhost:3000  
 
 ---
 
