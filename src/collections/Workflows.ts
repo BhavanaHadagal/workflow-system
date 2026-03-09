@@ -54,6 +54,11 @@ export const Workflows: CollectionConfig = {
         {
           name: 'conditionField',
           type: 'text',
+          admin: {
+            condition: (data) => {
+              return data?.targetCollection === 'contracts'
+            },
+          },
         },
         {
           name: 'conditionOperator',
@@ -65,10 +70,20 @@ export const Workflows: CollectionConfig = {
             { label: 'Greater Than or Equal', value: '>=' },
             { label: 'Less Than or Equal', value: '<=' },
           ],
+          admin: {
+            condition: (data) => {
+              return data?.targetCollection === 'contracts'
+            },
+          },
         },
         {
           name: 'conditionValue',
           type: 'text',
+          admin: {
+            condition: (data) => {
+              return data?.targetCollection === 'contracts'
+            },
+          },
         },
       ],
     },
